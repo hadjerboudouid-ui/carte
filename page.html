@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flip Clock Card</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Container perspective for 3D flip */
+      .container {
+        width: 90vw;
+        perspective: 1000px; /* 3D effect */
+        position: relative;
+        margin: 50px auto;
+      }
+      html {
+        margin: 0;
+        padding: 0;
+      }
+      /* Shared styles for both faces */
+      .facecard,
+      .backcard {
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        backface-visibility: hidden;
+        transition: transform 0.6s;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      /* Front card */
+      .facecard {
+        z-index: 2;
+      }
+
+      /* Back card, initially rotated 180deg */
+      .backcard {
+        transform: rotateY(180deg);
+      }
+
+      /* Flip trigger */
+      .container.flipped .facecard {
+        transform: rotateY(180deg);
+      }
+      .container.flipped .backcard {
+        transform: rotateY(0deg);
+      }
+
+      /* Images inside cards */
+      .facecard img,
+      .backcard img {
+        width: 100%;
+        display: block;
+      }
+
+      /* Top image bobbing */
+      .top {
+        position: absolute;
+        top: 24px;
+        left: 7px;
+        width: 290px;
+        z-index: 2;
+        animation: upDown 8s steps(1, end) infinite;
+      }
+      @keyframes upDown {
+        16% {
+          transform: translateY(-10vw);
+        }
+        30% {
+          transform: translateY(-25vw);
+        }
+        46% {
+          transform: translateY(-40vw);
+        }
+        62% {
+          transform: translateY(-25vw);
+        }
+        78% {
+          transform: translateY(-10vw);
+        }
+        100% {
+          transform: translateY(0);
+        }
+      }
+
+      /* Clock text */
+      .text {
+        position: absolute;
+        top: 88vw;
+        left: 1vw;
+        font-size: 3.5vw;
+        color: rgb(25, 52, 131);
+        font-family: "Roboto", sans-serif;
+        transform: rotate(90deg);
+        z-index: 3;
+      }
+      /* Reset default spacing */
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      /* Container should start at top */
+      .container {
+        margin: 0 auto;
+        padding: 0;
+        display: block;
+      }
+
+      /* Make images block-level to remove extra space */
+      .facecard img,
+      .backcard img,
+      .top {
+        display: block;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container" id="cardContainer">
+      <!-- Front face -->
+      <div class="facecard">
+        <img src="editedss.png" class="bg" />
+        <img src="setramss.png" class="top" />
+        <div class="text" id="clock">00:00:00</div>
+      </div>
+
+      <!-- Back face -->
+      <div class="backcard">
+        <img src="bluess.png" />
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script>
+      // --- Clock ---
+      function updateClock() {
+        document.getElementById("clock").textContent = dayjs().format(
+          "YYYY MM DD HH:mm:ss",
+        );
+      }
+      updateClock();
+      setInterval(updateClock, 1000);
+
+      // --- Swipe detection for mobile ---
+      const cardContainer = document.getElementById("cardContainer");
+      let startX = 0;
+
+      cardContainer.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+      });
+
+      cardContainer.addEventListener("touchend", (e) => {
+        let endX = e.changedTouches[0].clientX;
+        if (endX - startX > 50 || startX - endX > 50) {
+          // swipe left or right
+          cardContainer.classList.toggle("flipped");
+        }
+      });
+    </script>
+  </body>
+</html>
